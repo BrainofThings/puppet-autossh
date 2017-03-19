@@ -78,16 +78,6 @@ define autossh::tunnel(
 ){
   $tun_name     = $title
 
-  file{"autossh-${tun_name}_conf":
-    ensure  => 'present',
-    path    => "/etc/autossh/autossh-${tun_name}.conf",
-    mode    => '0660',
-    owner   => $user,
-    group   => $user,
-    content => template('autossh/autossh.conf.erb'),
-    notify  => Service["autossh-${tun_name}"],
-  }
-
   #
   # User sysV or systemd init depending on the OS
   #
@@ -163,6 +153,16 @@ define autossh::tunnel(
     default: {
     } # default
   } # end case osfamily
+
+  file{"autossh-${tun_name}_conf":
+    ensure  => 'present',
+    path    => "/etc/autossh/autossh-${tun_name}.conf",
+    mode    => '0660',
+    owner   => $user,
+    group   => $user,
+    content => template('autossh/autossh.conf.erb'),
+    notify  => Service["autossh-${tun_name}"],
+  }
 
   service{"autossh-${tun_name}":
     ensure  =>  $enable,
